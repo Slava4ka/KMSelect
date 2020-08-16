@@ -121,8 +121,11 @@ const KMSelect = ({placeholder, data, callback}:IKMSelect) => {
 			    <div className={styles.buttonGroup}>
 				    {
 				    	filterTemplate.length > 0 && (
-						    <button className={styles.customButton} onClick={() => setFilterTemplate('')}>
-							    <Close />
+						    <button
+							    id={ignoreId}
+							    className={styles.customButton}
+							    onClick={() => setFilterTemplate('')}>
+							    <Close id={ignoreId}/>
 						    </button>
 					    )
 				    }
