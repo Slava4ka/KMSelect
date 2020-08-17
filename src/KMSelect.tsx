@@ -1,4 +1,4 @@
-import React, {ChangeEvent, useCallback, useRef, useState} from 'react';
+import React, {useCallback, useRef, useState} from 'react';
 import styles from "./multiSelectStyle.module.scss";
 import Arrow from "./icons/Arrow";
 import useOutsideClick from "./useOutsideClick";
@@ -138,32 +138,19 @@ const KMSelect = ({placeholder, data, callback}:IKMSelect) => {
 				isOpen && (
 					<div className={styles.list}>
 						{
-							listFilter(checkboxData)
-								.filter((item:ICheckboxEntity) => item.selected)
-								.map((item:ICheckboxEntity) => (
-									<SelectItem
-										key={item.value}
-										name={item.name}
-										isChecked={item.selectedInThisSession}
-										highlight={true}
-										onChangeAction={(e) => setSelectedHandler(e.target.checked, item.id)}
-										onClickAction={() => setSelectedHandler(!item.selectedInThisSession, item.id)}
-									/>
-								))
-						}
-						{
-							listFilter(checkboxData)
-								.filter((item:ICheckboxEntity) => !item.selected)
-								.map((item:ICheckboxEntity) => (
-									<SelectItem
-										key={item.value}
-										name={item.name}
-										highlight={false}
-										isChecked={item.selectedInThisSession}
-										onChangeAction={(e) => setSelectedHandler(e.target.checked, item.id)}
-										onClickAction={() => setSelectedHandler(!item.selectedInThisSession, item.id)}
-									/>
-								))
+							[
+								...listFilter(checkboxData).filter((item:ICheckboxEntity) => item.selected),
+								...listFilter(checkboxData).filter((item:ICheckboxEntity) => !item.selected)
+							].map((item:ICheckboxEntity) => (
+								<SelectItem
+									key={item.value}
+									name={item.name}
+									isChecked={item.selectedInThisSession}
+									highlight={item.selected}
+									onChangeAction={(e) => setSelectedHandler(e.target.checked, item.id)}
+									onClickAction={() => setSelectedHandler(!item.selectedInThisSession, item.id)}
+								/>
+							))
 						}
 					</div>
 				)
