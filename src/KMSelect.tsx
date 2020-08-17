@@ -3,25 +3,29 @@ import styles from "./multiSelectStyle.module.scss";
 import Arrow from "./icons/Arrow";
 import useOutsideClick from "./useOutsideClick";
 import Close from "./icons/Close";
-import {ICheckboxEntity, IKMSelect, ISelectEntity, ISelectItem} from "./interface";
+import {ICheckboxEntity, IKMSelect, IRow, ISelectEntity, ISelectItem} from "./interface";
+import { FixedSizeList as List } from 'react-window';
 
 const ignoreId = 'DyTDnSn-wRf1miik-kgkYYQr2-lh7Pur5-3H8oFG'
 
-const SelectItem = ({name, isChecked, onClickAction, onChangeAction, highlight}:ISelectItem) => (
+const SelectItem = ({name, isChecked, onClickAction, onChangeAction, highlight, style}:ISelectItem) => (
 		<div
+			id={ignoreId}
 			className={highlight ? `${styles.listItem} ${styles.selected}` : styles.listItem}
 			onClick={onClickAction}
+			style={style}
 		>
-			<div className={styles.optionBox}>
-				<div className={styles.option}>
+			<div id={ignoreId} className={styles.optionBox}>
+				<div id={ignoreId} className={styles.option}>
 					<input
+						id={ignoreId}
 						name={name}
 						type="checkbox"
 						checked={isChecked}
 						onChange={onChangeAction}
 					/>
-					<label htmlFor="option">
-						<span>{name}</span>
+					<label id={ignoreId} htmlFor="option">
+						<span id={ignoreId}>{name}</span>
 					</label>
 				</div>
 			</div>
@@ -85,6 +89,24 @@ const KMSelect = ({placeholder, data, callback}:IKMSelect) => {
 		isOpen
 	);
 
+	const array = [
+		...listFilter(checkboxData).filter((item:ICheckboxEntity) => item.selected),
+		...listFilter(checkboxData).filter((item:ICheckboxEntity) => !item.selected)
+	]
+
+	const Row = ({ index, style}: IRow) => {
+
+		return <SelectItem
+			style={style}
+			key={array[index].value}
+			name={array[index].name}
+			isChecked={array[index].selectedInThisSession}
+			highlight={array[index].selected}
+			onChangeAction={(e) => setSelectedHandler(e.target.checked, array[index].id)}
+			onClickAction={() => setSelectedHandler(!array[index].selectedInThisSession, array[index].id)}
+		/>
+	};
+
 	return <div className={styles.multiSelect}>
 		<div
 			className={styles.box}
@@ -136,23 +158,15 @@ const KMSelect = ({placeholder, data, callback}:IKMSelect) => {
 			</div>
 			{
 				isOpen && (
-					<div className={styles.list}>
-						{
-							[
-								...listFilter(checkboxData).filter((item:ICheckboxEntity) => item.selected),
-								...listFilter(checkboxData).filter((item:ICheckboxEntity) => !item.selected)
-							].map((item:ICheckboxEntity) => (
-								<SelectItem
-									key={item.value}
-									name={item.name}
-									isChecked={item.selectedInThisSession}
-									highlight={item.selected}
-									onChangeAction={(e) => setSelectedHandler(e.target.checked, item.id)}
-									onClickAction={() => setSelectedHandler(!item.selectedInThisSession, item.id)}
-								/>
-							))
-						}
-					</div>
+					<List
+						className={styles.list}
+						height={200}
+						itemCount={array.length}
+						itemSize={35}
+						width={300}
+					>
+						{Row}
+					</List>
 				)
 			}
 		</div>

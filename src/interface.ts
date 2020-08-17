@@ -1,4 +1,4 @@
-import {ChangeEvent} from "react";
+import {ChangeEvent, CSSProperties} from "react";
 
 export interface ISelectEntity {
 	name: string;
@@ -23,4 +23,10 @@ export interface ISelectItem {
 	onClickAction: () => void;
 	onChangeAction: (e: ChangeEvent<HTMLInputElement>) => void
 	highlight: boolean;
+	style: CSSProperties;
+}
+
+export interface IRow {
+	index: number;
+	style: CSSProperties;
 }
