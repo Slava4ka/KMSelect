@@ -47,7 +47,7 @@ const KMSelect = ({placeholder, data, callback}:IKMSelect) => {
 
 	const ref = useRef(null);
 
-	const setSelectedHandler = (checkedStatus: boolean, index: number) => {
+	const setSelectedHandler = useCallback((checkedStatus: boolean, index: number) => {
 		checkedStatus ? setCheckboxCount(checkboxCount + 1) : setCheckboxCount(checkboxCount - 1)
 		setCheckboxData(
 			[
@@ -56,7 +56,7 @@ const KMSelect = ({placeholder, data, callback}:IKMSelect) => {
 				...checkboxData.slice(index + 1),
 			]
 		)
-	};
+	}, [checkboxCount, checkboxData]);
 
 	const listFilter = useCallback((data: ICheckboxEntity[]): ICheckboxEntity[] => {
 		if (filterTemplate.length > 0) {
@@ -66,17 +66,17 @@ const KMSelect = ({placeholder, data, callback}:IKMSelect) => {
 		}
 	}, [filterTemplate])
 
-	const updateCheckboxData = () => {
+	const updateCheckboxData = useCallback(() => {
 		setCheckboxData([...checkboxData.map(item => ({...item, selected: item.selectedInThisSession}))]);
-	};
+	}, [checkboxData]);
 
-	const onCloseHandler = (e: any) => {
+	const onDropHandler = useCallback((e: any) => {
 		e.stopPropagation();
 		e.preventDefault();
 		setCheckboxData([...defaultData]);
 		setCheckboxCount(0);
 		callback([]);
-	};
+	}, []);
 
 	useOutsideClick(
 		ref,
@@ -89,23 +89,23 @@ const KMSelect = ({placeholder, data, callback}:IKMSelect) => {
 		isOpen
 	);
 
-	const array = [
+	const actualCheckboxData = ([
 		...listFilter(checkboxData).filter((item:ICheckboxEntity) => item.selected),
 		...listFilter(checkboxData).filter((item:ICheckboxEntity) => !item.selected)
-	]
+	]);
 
-	const Row = ({ index, style}: IRow) => {
+	const Row = useCallback(({ index, style}: IRow) => {
 
 		return <SelectItem
 			style={style}
-			key={array[index].value}
-			name={array[index].name}
-			isChecked={array[index].selectedInThisSession}
-			highlight={array[index].selected}
-			onChangeAction={(e) => setSelectedHandler(e.target.checked, array[index].id)}
-			onClickAction={() => setSelectedHandler(!array[index].selectedInThisSession, array[index].id)}
+			key={actualCheckboxData[index].value}
+			name={actualCheckboxData[index].name}
+			isChecked={actualCheckboxData[index].selectedInThisSession}
+			highlight={actualCheckboxData[index].selected}
+			onChangeAction={(e) => setSelectedHandler(e.target.checked, actualCheckboxData[index].id)}
+			onClickAction={() => setSelectedHandler(!actualCheckboxData[index].selectedInThisSession, actualCheckboxData[index].id)}
 		/>
-	};
+	}, [actualCheckboxData, setSelectedHandler]);
 
 	return <div className={styles.multiSelect}>
 		<div
@@ -120,7 +120,7 @@ const KMSelect = ({placeholder, data, callback}:IKMSelect) => {
 				{checkboxCount > 0 &&
 					<div
 						id={ignoreId}
-                        onClick={(e) => onCloseHandler(e)}
+                        onClick={(e) => onDropHandler(e)}
                         role="button"
 						className={styles.selectedCount}
 						tabIndex={0}
@@ -161,7 +161,7 @@ const KMSelect = ({placeholder, data, callback}:IKMSelect) => {
 					<List
 						className={styles.list}
 						height={200}
-						itemCount={array.length}
+						itemCount={actualCheckboxData.length}
 						itemSize={35}
 						width={300}
 					>
