@@ -1,19 +1,22 @@
 import React from 'react';
-import styles from './multiSelectStyle.module.scss'
-import KMSelect from "./KMSelect";
+import KMSelect from './KMSelector/KMSelect';
 import data from './data';
 
-const App = () => {
-
-	return (
-		<div className={styles.App}>
-			<KMSelect
-				placeholder={'Filter'}
-				data={data}
-				callback={(selectedFilters: any) => console.log(selectedFilters)}
-			/>
-		</div>
-	);
-}
+const App = () => (
+	<div style={{
+		height: '32px',
+		width: '300px',
+	}}
+	>
+		<KMSelect
+			placeholder="Filter"
+			data={data}
+			callback={(selectedFilters: any) => {
+				/* eslint-disable-next-line no-console */
+				console.log(selectedFilters);
+			}}
+		/>
+	</div>
+);
 
 export default App;

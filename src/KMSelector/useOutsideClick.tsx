@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect } from 'react';
 
 const useOutsideClick = (ref: any, ignoreId: string, callback: () => void, state: boolean) => {
 	const handleClick = (e: any) => {
@@ -8,10 +8,10 @@ const useOutsideClick = (ref: any, ignoreId: string, callback: () => void, state
 	};
 
 	useEffect(() => {
-		document.addEventListener("click", handleClick);
+		document.addEventListener('click', handleClick);
 
 		return () => {
-			document.removeEventListener("click", handleClick);
+			document.removeEventListener('click', handleClick);
 		};
 	});
 };
